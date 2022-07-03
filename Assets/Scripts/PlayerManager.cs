@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     public static Animator _playerAnimator;
     public static float _x;
     public static float _y;
+    public static float _beforeInput;
     GameObject _player;
 
     void Start()
@@ -20,7 +21,11 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(_x);
+        
         _x = Input.GetAxisRaw("Horizontal");
         _y = Input.GetAxisRaw("Vertical");
+
+        _beforeInput = _x;
     }
 }

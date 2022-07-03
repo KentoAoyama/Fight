@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CommandScript : MonoBehaviour
 {
-    public List<int> _input = new List<int>();
+    public List<int> _commandInput = new List<int>();
     int[] _hadoken = { 2, 3, 6 };
     int[] _shoryuken = { 6, 2, 3 };
     int[] _shoryuken2 = { 3, 2, 3 };
@@ -22,9 +22,9 @@ public class CommandScript : MonoBehaviour
     {
         _commandTimer += Time.deltaTime;
 
-        if (_commandTimer > _comandInterval && _input.Count != 0 )
+        if (_commandTimer > _comandInterval && _commandInput.Count != 0 )
         {
-            _input.RemoveRange(0, _input.Count);
+            _commandInput.RemoveRange(0, _commandInput.Count);
         }
 
         
@@ -75,14 +75,14 @@ public class CommandScript : MonoBehaviour
         }
 
         
-        if (_input.Count > _inputLimit)
+        if (_commandInput.Count > _inputLimit)
         {
             for (int co = 0; co < _inputLimit; co++)
             {
-                _input[co] = _input[co + 1];
+                _commandInput[co] = _commandInput[co + 1];
             }
 
-            _input.RemoveAt(_inputLimit);
+            _commandInput.RemoveAt(_inputLimit);
         }
 
 
@@ -116,9 +116,9 @@ public class CommandScript : MonoBehaviour
 
         foreach (var co in specialmove)
         {
-            if (count < _input.Count)
+            if (count < _commandInput.Count)
             {
-                if (_input[count] == co)
+                if (_commandInput[count] == co)
                 {
                     success++;
 
@@ -136,8 +136,8 @@ public class CommandScript : MonoBehaviour
     IEnumerator InputInterval()
     {
         yield return new WaitForSeconds(0.025f);
-        _input.Add(_lever);
-        _input.Remove(5);
+        _commandInput.Add(_lever);
+        _commandInput.Remove(5);
         Debug.Log(_lever);
     }
 }
