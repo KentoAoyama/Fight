@@ -5,14 +5,14 @@ using UnityEngine;
 public class CommandScript : MonoBehaviour
 {
     public List<int> _input = new List<int>();
-    List<int> _hadoken = new List<int>() { 2, 3, 6 };
-    List<int> _shoryuken = new List<int>() { 6, 2, 3 };
-    List<int> _shoryuken2 = new List<int>() { 3, 2, 3 };
+    int[] _hadoken = { 2, 3, 6 };
+    int[] _shoryuken = { 6, 2, 3 };
+    int[] _shoryuken2 = { 3, 2, 3 };
 
     int _lever = 5;
     int _beforeLever;
 
-    int _inputLimit = 3;
+    [SerializeField] int _inputLimit = 3;
 
     float _commandTimer;
     float _comandInterval = 1f;
@@ -77,10 +77,12 @@ public class CommandScript : MonoBehaviour
         
         if (_input.Count > _inputLimit)
         {
-            _input[0] = _input[1];
-            _input[1] = _input[2];
-            _input[2] = _input[3];
-            _input.RemoveAt(3);
+            for (int co = 0; co < _inputLimit; co++)
+            {
+                _input[co] = _input[co + 1];
+            }
+
+            _input.RemoveAt(_inputLimit);
         }
 
 
@@ -107,7 +109,7 @@ public class CommandScript : MonoBehaviour
         _beforeLever = _lever;
     }
 
-    bool CommandSuccess(List<int> specialmove)
+    bool CommandSuccess(int[] specialmove)
     {
         int count = 0;
         int success = 0;
