@@ -8,76 +8,52 @@ public class PlayerMove : MonoBehaviour
     
     /// <summary> プレイヤーの移動速度　</summary>
     [SerializeField] float _moveSpeedX = 1f;
+    Animator _playerAnimator;
     
+    float _x;
+    float _y;
+    //float _beforeInput;
+    public float InputY { get => _y; set => _y = value; }
+    public float InputX { get => _x; set => _x = value; }
+    //public float BeforeInput => _beforeInput;
     
-    /// <summary> ステップを行う時間　</summary>
-    [SerializeField] float _stepSpeed = 1f;
-    /// <summary>　ステップの速度 </summary>
-    [SerializeField] float _stepPower = 10f;
-    public int _stepCount;
-    public bool _isStep;
-    public float _stepInterval = 0.25f;
+    Rigidbody2D _rb;
 
+
+    void Start()
+    {
+        _rb = GetComponent<Rigidbody2D>();
+        _playerAnimator = GetComponent<Animator>();
+    }
 
 
     void Update()
     {
-        PlayerMoveHorizontal(PlayerManager._x, PlayerManager._y);
+        _x = Input.GetAxisRaw("Horizontal");
+        _y = Input.GetAxisRaw("Vertical");
+
+        PlayerMoveHorizontal();
+
     }
 
     
-    void PlayerMoveHorizontal(float x, float y)//プレイヤーの通常移動の処理
+    void PlayerMoveHorizontal()//プレイヤーの通常移動の処理
     {
-        if (x > 0)//移動速度を一定にする
+        if (_x > 0)//移動速度を一定にする
         {
-            x = 1;
+            _x = 1;
         }
-        else if (x < 0)
+        else if (_x < 0)
         {
-            x = -1;
-        }
-
-        if (y >= -0.1 && _stepCount < 1)//しゃがんでいる時かつステップしていない時
-        {
-                PlayerManager._rb.velocity = new Vector2(_moveSpeedX * x, PlayerManager._rb.velocity.y);
+            _x = -1;
         }
 
-        PlayerManager._playerAnimator.SetFloat("XMove", x);//移動のアニメーションの管理
-        PlayerManager._playerAnimator.SetFloat("YMove", y);
+        if (_y >= -0.1)//しゃがんでいる時かつステップしていない時
+        {
+                _rb.velocity = new Vector2(_moveSpeedX * _x, _rb.velocity.y);
+        }
+
+        _playerAnimator.SetFloat("XMove", _x);//移動のアニメーションの管理
+        _playerAnimator.SetFloat("YMove", _y);
     }
-
-
-    //void PlayerStep(float x)
-    //{
-    //    if (x == 1 && _stepCount == 0 && !_isStep)
-    //    {
-    //        _isStep = true;
-    //        StartCoroutine(StepCount());
-    //    }
-
-    //    if (x == 1 && _stepCount == 1 && _isStep)
-    //    {
-    //        StartCoroutine(Step(1));
-    //    }
-    //}//1から０になった時を識別しよう
-
-    
-    //IEnumerator StepCount()
-    //{
-    //    _stepCount++;
-    //    yield return new WaitForSeconds(_stepInterval);
-    //    _stepCount = 0;
-    //    _isStep = false;
-    //}
-
-
-    //IEnumerator Step(int direction)
-    //{
-    //    PlayerManager._rb.AddForce(Vector2.right * _stepPower * direction, ForceMode2D.Impulse);
-    //    yield return new WaitForSeconds(_stepSpeed);
-    //    PlayerManager._rb.velocity = Vector2.zero;
-
-    //    _isStep = false;
-    //    _stepCount = 0;
-    //}
 }
