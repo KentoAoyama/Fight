@@ -12,10 +12,8 @@ public class PlayerMove : MonoBehaviour
     
     float _x;
     float _y;
-    //float _beforeInput;
     public float InputY { get => _y; set => _y = value; }
     public float InputX { get => _x; set => _x = value; }
-    //public float BeforeInput => _beforeInput;
     
     Rigidbody2D _rb;
 
