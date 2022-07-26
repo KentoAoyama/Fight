@@ -17,11 +17,14 @@ public class PlayerMove : MonoBehaviour
     
     Rigidbody2D _rb;
 
+    PlayerStep _ps;
+
 
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _playerAnimator = GetComponent<Animator>();
+        _ps = GetComponent<PlayerStep>();
     }
 
 
@@ -29,9 +32,11 @@ public class PlayerMove : MonoBehaviour
     {
         _x = Input.GetAxisRaw("Horizontal");
         _y = Input.GetAxisRaw("Vertical");
+        //_x = Input.GetAxisRaw("CrossH");
+        //_y = Input.GetAxisRaw("CrossV");
+
 
         PlayerMoveHorizontal();
-
     }
 
     
@@ -46,10 +51,15 @@ public class PlayerMove : MonoBehaviour
             _x = -1;
         }
 
-        if (_y >= -0.1)//しゃがんでいる時かつステップしていない時
+        if (_y >= -0.2 && !_ps.IsStep)//しゃがんでいない時かつステップしていない時
         {
-                _rb.velocity = new Vector2(_moveSpeedX * _x, _rb.velocity.y);
+            _rb.velocity = new Vector2(_moveSpeedX * _x, _rb.velocity.y);
         }
+        else if (_y < -0.2)
+        {
+            _rb.velocity = Vector2.zero;
+        }
+
 
         _playerAnimator.SetFloat("XMove", _x);//移動のアニメーションの管理
         _playerAnimator.SetFloat("YMove", _y);
