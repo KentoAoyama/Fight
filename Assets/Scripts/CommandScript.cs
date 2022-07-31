@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CommandScript : MonoBehaviour
 {
-    public List<int> _commandInput = new List<int>();
+    Queue<int> _commandInput = new();
     int[] _hadoken = { 2, 3, 6 };
     int[] _shoryuken = { 6, 2, 3 };
     int[] _shoryuken2 = { 3, 2, 3 };
@@ -12,25 +12,31 @@ public class CommandScript : MonoBehaviour
     int _lever = 5;
     int _beforeLever;
 
+    [Header("Command")]
     [SerializeField] int _inputLimit = 3;
 
     float _commandTimer;
     float _comandInterval = 1f;
+
+    [Header("Check")]
+    [SerializeField] List<int> _checkCommands = new();
+    [SerializeField] bool _commandCheck = false;
 
 
     void Update()
     {
         _commandTimer += Time.deltaTime;
 
-        if (_commandTimer > _comandInterval && _commandInput.Count != 0 )
+        if (_commandTimer > _comandInterval)
         {
-            _commandInput.RemoveRange(0, _commandInput.Count);
+            _commandInput.Clear();
+            _checkCommands.Clear();
         }
 
-        
+
         if (Input.GetKeyDown(KeyCode.W))
         {
-            _lever += 3;            
+            _lever += 3;
         }
 
         if (Input.GetKeyUp(KeyCode.W))
@@ -74,23 +80,20 @@ public class CommandScript : MonoBehaviour
             _lever -= 1;
         }
 
-        
+
         if (_commandInput.Count > _inputLimit)
         {
-            for (int co = 0; co < _inputLimit; co++)
-            {
-                _commandInput[co] = _commandInput[co + 1];
-            }
-
-            _commandInput.RemoveAt(_inputLimit);
+            _commandInput.Dequeue();
         }
 
 
-        if (_beforeLever != _lever)
+        if (_beforeLever != _lever && _lever != 5)
         {
             _commandTimer = 0;
             StartCoroutine(InputInterval());
         }
+
+
 
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -99,45 +102,74 @@ public class CommandScript : MonoBehaviour
             {
                 Debug.Log("”g“®Œ");
             }
-
+            
             if (CommandSuccess(_shoryuken) || CommandSuccess(_shoryuken2))
             {
                 Debug.Log("¸—´Œ");
             }
         }
 
+
+        if (_commandCheck)
+        {
+            if (_checkCommands.Count > _inputLimit)
+            {
+                for (int co = 0; co < _inputLimit; co++)
+                {
+                    _checkCommands[co] = _checkCommands[co + 1];
+                }
+
+                _checkCommands.RemoveAt(_inputLimit);
+            }
+        }
+
         _beforeLever = _lever;
     }
 
+
     bool CommandSuccess(int[] specialmove)
     {
-        int count = 0;
         int success = 0;
+        Queue<int> commands = new (_commandInput);
 
-        foreach (var co in specialmove)
+        if (commands.Count >= 3)
         {
-            if (count < _commandInput.Count)
+            while (true)
             {
-                if (_commandInput[count] == co)
+                foreach (var co in specialmove)
                 {
-                    success++;
-
-                    if (success == 3)
+                    if (commands.Peek() == co)
                     {
-                        return true;
+                        success++;
+                        commands.Dequeue();
                     }
+                    else
+                    {
+                        success = 0;
+                        commands.Dequeue();
+                        break;
+                    }                  
+                }               
+
+                if (commands.Count < 3)
+                {
+                    break;
                 }
             }
-            count++;
         }
-        return false;
+
+        return success >= 3;
     }
+
 
     IEnumerator InputInterval()
     {
-        yield return new WaitForSeconds(0.025f);
-        _commandInput.Add(_lever);
-        _commandInput.Remove(5);
-        Debug.Log(_lever);
+        yield return new WaitForSeconds(0.016f);
+        _commandInput.Enqueue(_lever);
+
+        if (_commandCheck)
+        {
+            _checkCommands.Add(_lever);
+        }
     }
 }
