@@ -2,14 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class AttackBase : MonoBehaviour
 {
-    int _frame = 0;
     
     
-    void FixedUpdate()
+    void Start()
     {
-        _frame++;
+        
     }
 
+
+    void FixedUpdate()
+    {
+        
+    }
+
+
+    void Update()
+    {
+        
+    }
 }

@@ -4,37 +4,90 @@ using UnityEngine;
 
 public class CommandScript : MonoBehaviour
 {
-    Queue<int> _commandInput = new();
-    int[] _hadoken = { 2, 3, 6 };
-    int[] _shoryuken = { 6, 2, 3 };
-    int[] _shoryuken2 = { 3, 2, 3 };
+    [Tooltip("入力を受けるキュー")] Queue<int> _commandInput = new();
+    
+    [Tooltip("波動拳の入力")] int[] _hadoken = { 2, 3, 6 };
+    [Tooltip("昇龍拳の入力")] int[] _shoryuken = { 6, 2, 3 };
+    [Tooltip("昇龍拳の入力別パターン")] int[] _shoryuken2 = { 3, 2, 3 };
 
-    int _lever = 5;
-    int _beforeLever;
+
+    [Tooltip("レバー入力の判定")] int _lever = 5;
+    [Tooltip("前回の入力を保存する変数")] int _beforeLever;
+
 
     [Header("Command")]
-    [SerializeField] int _inputLimit = 3;
+    [SerializeField, Tooltip("入力を保存しておく最大量")] int _inputLimit = 6;
 
-    float _commandTimer;
-    float _comandInterval = 1f;
+    [Tooltip("入力時間を測るためのタイマー")]　float _timer;
+    [Tooltip("コマンドをリセットする時間")] float _comandInterval = 1f;
+
 
     [Header("Check")]
-    [SerializeField] List<int> _checkCommands = new();
-    [SerializeField] bool _commandCheck = false;
+    [SerializeField, Tooltip("チェックに使う用のリスト")] List<int> _checkCommands = new();
+    [SerializeField, Tooltip("チェックを行うかの確認")] bool _commandCheck = false;
 
 
     void Update()
     {
-        _commandTimer += Time.deltaTime;
+        _timer += Time.deltaTime;
 
-        if (_commandTimer > _comandInterval)
+        if (_timer > _comandInterval)  //コマンドのリセットを時間で行う
         {
             _commandInput.Clear();
             _checkCommands.Clear();
         }
 
 
-        if (Input.GetKeyDown(KeyCode.W))
+        CommandInput();　//入力判定
+
+
+        if (_commandInput.Count > _inputLimit)　//キューの長さを固定
+        {
+            _commandInput.Dequeue();
+        }
+
+
+        if (_beforeLever != _lever && _lever != 5)　//入力が入った場合キューに追加
+        {
+            _timer = 0;
+            //StartCoroutine(InputInterval());
+
+            _commandInput.Enqueue(_lever);
+
+            if (_commandCheck)
+            {
+                _checkCommands.Add(_lever);
+            }
+
+        }
+
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (CommandSuccess(_hadoken))　//コマンドの成立判定
+            {
+                Debug.Log("波動拳");
+            }
+            
+            if (CommandSuccess(_shoryuken) || CommandSuccess(_shoryuken2))
+            {
+                Debug.Log("昇龍拳");
+            }
+        }
+
+
+        ListCheck();　//デバッグのためキューと同じ処理をリストでも実行
+
+
+        _beforeLever = _lever;　//レバーの入力を保存
+    }
+
+
+    /// <summary>レバー入力の判定</summary>
+    void CommandInput()
+    {
+        if (Input.GetKeyDown(KeyCode.W)) 
         {
             _lever += 3;
         }
@@ -79,97 +132,73 @@ public class CommandScript : MonoBehaviour
         {
             _lever -= 1;
         }
-
-
-        if (_commandInput.Count > _inputLimit)
-        {
-            _commandInput.Dequeue();
-        }
-
-
-        if (_beforeLever != _lever && _lever != 5)
-        {
-            _commandTimer = 0;
-            StartCoroutine(InputInterval());
-        }
-
-
-
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (CommandSuccess(_hadoken))
-            {
-                Debug.Log("波動拳");
-            }
-            
-            if (CommandSuccess(_shoryuken) || CommandSuccess(_shoryuken2))
-            {
-                Debug.Log("昇龍拳");
-            }
-        }
-
-
-        if (_commandCheck)
-        {
-            if (_checkCommands.Count > _inputLimit)
-            {
-                for (int co = 0; co < _inputLimit; co++)
-                {
-                    _checkCommands[co] = _checkCommands[co + 1];
-                }
-
-                _checkCommands.RemoveAt(_inputLimit);
-            }
-        }
-
-        _beforeLever = _lever;
     }
 
-
+    
+    
+    /// <summary>コマンドの成立判定</summary>
     bool CommandSuccess(int[] specialmove)
     {
         int success = 0;
-        Queue<int> commands = new (_commandInput);
+        Queue<int> commands = new (_commandInput);　//現在の入力をコピー
 
-        if (commands.Count >= 3)
+        if (commands.Count >= 3)　//現在の入力の数が３以上か
         {
             while (true)
             {
-                foreach (var co in specialmove)
+                foreach (var co in specialmove)　//コマンドの配列をひとつずつ取り出す
                 {
-                    if (commands.Peek() == co)
+                    if (commands.Peek() == co)　//キューの先頭とコマンドの要素を比較
                     {
                         success++;
-                        commands.Dequeue();
+                        commands.Dequeue();　//successにプラスし先頭を削除
                     }
                     else
                     {
                         success = 0;
                         commands.Dequeue();
-                        break;
-                    }                  
+                        break;　　　　　　　//successをリセットし先頭を削除、ループを抜ける
+                    }                 
                 }               
 
-                if (commands.Count < 3)
+                if (commands.Count < 3)　//現在の要素の数によってwhileを抜ける
                 {
                     break;
                 }
             }
         }
 
-        return success >= 3;
+        return success >= 3;　//successの数を見て値を返す
     }
 
 
+    /// <summary>キューへの追加をコルーチンで実行</summary>
     IEnumerator InputInterval()
     {
-        yield return new WaitForSeconds(0.016f);
+        yield return null;
         _commandInput.Enqueue(_lever);
 
         if (_commandCheck)
         {
             _checkCommands.Add(_lever);
+        }
+    }
+
+
+    /// <summary>リストにキューと同じような処理を実行させる</summary>
+    void ListCheck()
+    {
+        if (_commandCheck)
+        {
+            if (_checkCommands.Count > _inputLimit)　//Listがリミット以上の要素数になったら
+            {
+                for (int co = 0; co < _inputLimit; co++)
+                {
+                    _checkCommands[co] = _checkCommands[co + 1];　//要素をすべてひとつ前にずらす
+                }
+
+                _checkCommands.RemoveAt(_inputLimit);　//最後の要素を削除する
+            }
         }
     }
 }

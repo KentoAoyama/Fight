@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    
-    
-    /// <summary> プレイヤーの移動速度　</summary>
-    [SerializeField] float _moveSpeedX = 1f;
-    Animator _playerAnimator;
-    
-    float _x;
-    float _y;
-    public float InputY { get => _y; set => _y = value; }
-    public float InputX { get => _x; set => _x = value; }
-    
+    [SerializeField, Tooltip("移動の速度")] float _moveSpeedX = 1f;
+    [Tooltip("横移動の入力")] float _x;
+    [Tooltip("縦移動の入力")] float _y;
+    public float InputX => _x;
+    public float InputY => _y;
+
     Rigidbody2D _rb;
+    Animator _playerAnimator;
 
     PlayerStep _ps;
 
@@ -24,6 +20,7 @@ public class PlayerMove : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _playerAnimator = GetComponent<Animator>();
+        
         _ps = GetComponent<PlayerStep>();
     }
 
@@ -32,17 +29,15 @@ public class PlayerMove : MonoBehaviour
     {
         _x = Input.GetAxisRaw("Horizontal");
         _y = Input.GetAxisRaw("Vertical");
-        //_x = Input.GetAxisRaw("CrossH");
-        //_y = Input.GetAxisRaw("CrossV");
-
 
         PlayerMoveHorizontal();
     }
 
-    
-    void PlayerMoveHorizontal()//プレイヤーの通常移動の処理
+
+    /// <summary>プレイヤーの横移動の処理</summary>
+    void PlayerMoveHorizontal()
     {
-        if (_x > 0)//移動速度を一定にする
+        if (_x > 0)　//移動速度を一定にする
         {
             _x = 1;
         }
@@ -51,7 +46,7 @@ public class PlayerMove : MonoBehaviour
             _x = -1;
         }
 
-        if (_y >= -0.2 && !_ps.IsStep)//しゃがんでいない時かつステップしていない時
+        if (_y >= -0.2 && !_ps.IsStep)　//しゃがんでいない時かつステップしていない時
         {
             _rb.velocity = new Vector2(_moveSpeedX * _x, _rb.velocity.y);
         }
@@ -60,8 +55,7 @@ public class PlayerMove : MonoBehaviour
             _rb.velocity = Vector2.zero;
         }
 
-
-        _playerAnimator.SetFloat("XMove", _x);//移動のアニメーションの管理
+        _playerAnimator.SetFloat("XMove", _x);　//移動のアニメーションの管理
         _playerAnimator.SetFloat("YMove", _y);
     }
 }

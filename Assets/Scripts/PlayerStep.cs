@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class PlayerStep : MonoBehaviour
 {
-    [SerializeField] float _stepInterval = 0.3f;
-    [SerializeField] float _stepTime = 0.29f;
-    [SerializeField] float _backStepTime = 0.34f;
-    [SerializeField] float _stepSpeed = 10;
-    bool _fStep1 = false;
-    bool _fStep2 = false;
-    bool _bStep1 = false;
-    bool _bStep2 = false;
-    bool _isStep;
-
+    [SerializeField, Tooltip("ステップ入力を受け付ける時間")] float _stepInterval = 0.3f;
+    [SerializeField, Tooltip("前ステップを行う時間")] float _stepTime = 0.29f;
+    [SerializeField, Tooltip("バックステップを行う時間")] float _backStepTime = 0.34f;
+    [SerializeField, Tooltip("ステップの速度・距離")] float _stepSpeed = 10;
+    [Tooltip("前ステップの入力判定１")] bool _fStep1 = false;
+    [Tooltip("前ステップの入力判定２")] bool _fStep2 = false;
+    [Tooltip("バックステップの入力判定１")] bool _bStep1 = false;
+    [Tooltip("バックステップの入力判定２")] bool _bStep2 = false;
+    [Tooltip("ステップをしているか")] bool _isStep;
     public bool IsStep => _isStep;
 
-    float _fTimer;
-    float _bTimer2;
+    [Tooltip("前に入力が入ってからの時間計測")] float _fTimer;
+    [Tooltip("後ろに入力が入ってからの時間計測")] float _bTimer;
 
     PlayerMove _pm;
     Animator _ani;
@@ -33,17 +32,18 @@ public class PlayerStep : MonoBehaviour
 
     void Update()
     {
-        if (!_isStep)
+        if (!_isStep && _pm.InputY > -0.2)　//ステップ中でないかつしゃがんでいないなら
         {
-            StepFront();
+            //StepFront();
 
             StepBack();
         }
     }
 
 
-    void StepFront()
-    {
+    /// <summary>前ステップの処理</summary>
+    void Step(float vec, float timer, bool step1, bool step2, bool step3, Coroutine coroutine)
+    {     
         if (_pm.InputX == 1 && !_fStep1)
         {
             _fStep1 = true;
@@ -68,7 +68,7 @@ public class PlayerStep : MonoBehaviour
             }
         }
 
-        if (_fStep2 && _pm.InputX == 1)
+        if (_pm.InputX == 1 &&　_fStep2)
         {
             _fStep2 = false;
             _fStep1 = false;
@@ -95,21 +95,21 @@ public class PlayerStep : MonoBehaviour
 
         if (_bStep1)
         {
-            _bTimer2 += Time.deltaTime;
+            _bTimer += Time.deltaTime;
 
-            if (_bTimer2 > _stepInterval)
+            if (_bTimer > _stepInterval)
             {
                 _bStep1 = false;
                 _bStep2 = false;
-                _bTimer2 = 0;
+                _bTimer = 0;
             }
         }
 
-        if (_bStep2 && _pm.InputX == -1)
+        if (_pm.InputX == -1 && _bStep2)
         {
             _bStep2 = false;
             _bStep1 = false;
-            _bTimer2 = 0;
+            _bTimer = 0;
             _isStep = true;
             StartCoroutine(BackStepRoutine());
         }
