@@ -41,12 +41,7 @@ public class PlayerMove : MonoBehaviour
         {
             _x = 1;
         }
-        else if (_x < 0)
-        {
-            _x = -1;
-        }
 
-        Vector2 a = new Vector2( _x, _y).normalized;
 
         if (_y >= -0.2 && !_ps.IsStep)　//しゃがんでいない時かつステップしていない時
         {

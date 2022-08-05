@@ -18,6 +18,7 @@ public class PlayerStep : MonoBehaviour
     [Tooltip("‘O‚É“ü—Í‚ª“ü‚Á‚Ä‚©‚ç‚ÌŽžŠÔŒv‘ª")] float _fTimer;
     [Tooltip("Œã‚ë‚É“ü—Í‚ª“ü‚Á‚Ä‚©‚ç‚ÌŽžŠÔŒv‘ª")] float _bTimer;
 
+    
     PlayerMove _pm;
     Animator _ani;
     Rigidbody2D _rb;
