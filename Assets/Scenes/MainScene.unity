@@ -903,7 +903,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7647828827918751501, guid: 52e26033c79591742a57b43c3e5a144e, type: 3}
       propertyPath: _inputLimit
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7647828827918751501, guid: 52e26033c79591742a57b43c3e5a144e, type: 3}
       propertyPath: _commandCheck

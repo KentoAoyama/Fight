@@ -5,9 +5,11 @@ using UnityEngine;
 public class PlayerStep : MonoBehaviour
 {
     [SerializeField, Tooltip("ステップ入力を受け付ける時間")] float _stepInterval = 0.3f;
+
     [SerializeField, Tooltip("前ステップを行う時間")] float _stepTime = 0.29f;
     [SerializeField, Tooltip("バックステップを行う時間")] float _backStepTime = 0.34f;
     [SerializeField, Tooltip("ステップの速度・距離")] float _stepSpeed = 10;
+
     [Tooltip("前ステップの入力判定１")] bool _fStep1 = false;
     [Tooltip("前ステップの入力判定２")] bool _fStep2 = false;
     [Tooltip("バックステップの入力判定１")] bool _bStep1 = false;
@@ -26,9 +28,10 @@ public class PlayerStep : MonoBehaviour
 
     void Start()
     {
-        _pm = GetComponent<PlayerMove>();
         _rb = GetComponent<Rigidbody2D>();
         _ani = GetComponent<Animator>();
+
+        _pm = GetComponent<PlayerMove>();
     }
 
     void Update()
@@ -75,7 +78,7 @@ public class PlayerStep : MonoBehaviour
             _fStep1 = false;
             _fTimer = 0;
             _isStep = true;
-            StartCoroutine(FrontStepRoutine());
+            StartCoroutine(StepRoutine(1, _stepTime, "IsStep"));
         }
     }
 
@@ -112,31 +115,21 @@ public class PlayerStep : MonoBehaviour
             _bStep1 = false;
             _bTimer = 0;
             _isStep = true;
-            StartCoroutine(BackStepRoutine());
+            StartCoroutine(StepRoutine(-1, _backStepTime, "IsBackStep"));
         }
     }
 
 
-    IEnumerator FrontStepRoutine()
+    IEnumerator StepRoutine(float dir, float steptime, string animation)
     {
         _rb.velocity = Vector2.zero;
-        _rb.AddForce(transform.right * _stepSpeed, ForceMode2D.Impulse);
-        _ani.SetBool("IsStep", true);
-        yield return new WaitForSeconds(_stepTime);
-        _ani.SetBool("IsStep", false);
+        _rb.AddForce(transform.right * _stepSpeed * dir, ForceMode2D.Impulse);
+
+        _ani.SetBool(animation, true);
+        yield return new WaitForSeconds(steptime);
+        _ani.SetBool(animation, false);
+
         _isStep = false;
     }
-
-
-    IEnumerator BackStepRoutine()
-    {
-        _rb.velocity = Vector2.zero;
-        _rb.AddForce(transform.right * _stepSpeed * -1, ForceMode2D.Impulse);
-        _ani.SetBool("IsBackStep", true);
-        yield return new WaitForSeconds(_backStepTime);
-        _ani.SetBool("IsBackStep", false);
-        _isStep = false;
-    }
-
 }
 

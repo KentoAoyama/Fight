@@ -6,9 +6,9 @@ public class CommandScript : MonoBehaviour
 {
     [Tooltip("入力を受けるキュー")] Queue<int> _commandInput = new();
 
-    [Tooltip("波動拳の入力")] int[] _hadoken = { 2, 3, 6 };
-    [Tooltip("昇龍拳の入力")] int[] _shoryuken = { 6, 2, 3 };
-    [Tooltip("昇龍拳の入力別パターン")] int[] _shoryuken2 = { 3, 2, 3 };
+    [Tooltip("波動拳の入力")] readonly int[] _hadoken = { 2, 3, 6 };
+    [Tooltip("昇龍拳の入力")] readonly int[] _shoryuken = { 6, 2, 3 };
+    [Tooltip("昇龍拳の入力別パターン")] readonly int[] _shoryuken2 = { 3, 2, 3 };
 
 
     [Tooltip("レバー入力の判定")] int _lever = 5;
@@ -26,8 +26,6 @@ public class CommandScript : MonoBehaviour
     [SerializeField, Tooltip("チェックに使う用のリスト")] List<int> _checkCommands = new();
     [SerializeField, Tooltip("チェックを行うかの確認")] bool _commandCheck = false;
 
-
-    //const int 
 
     void Update()
     {
@@ -85,56 +83,59 @@ public class CommandScript : MonoBehaviour
     }
 
 
-    /// <summary>レバー入力の判定</summary>
+    /// <summary>テンキー形式でのレバー入力の判定</summary>
     void CommandInput()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        Vector2 currentLever = new (x, y);
+
+        if (currentLever == new Vector2(-1, -1))
         {
-            _lever += 3;
+            _lever = 1;  //レバー入力１
         }
 
-        if (Input.GetKeyUp(KeyCode.W))
+        if (currentLever == new Vector2(0, -1))
         {
-            _lever -= 3;
+            _lever = 2;　//レバー入力２
         }
 
-
-
-        if (Input.GetKeyDown(KeyCode.A))
+        if (currentLever == new Vector2(1, -1))
         {
-            _lever -= 1;
+            _lever = 3;　//レバー入力３
         }
 
-        if (Input.GetKeyUp(KeyCode.A))
+        if (currentLever == new Vector2(-1, 0))
         {
-            _lever += 1;
+            _lever = 4;　//レバー入力４
         }
 
-
-
-        if (Input.GetKeyDown(KeyCode.S))
+        if (currentLever == new Vector2(0, 0))
         {
-            _lever -= 3;
+            _lever = 5;　//レバー入力５
         }
 
-        if (Input.GetKeyUp(KeyCode.S))
+        if (currentLever == new Vector2(1, 0))
         {
-            _lever += 3;
+            _lever = 6;　//レバー入力６
         }
 
-
-
-        if (Input.GetKeyDown(KeyCode.D))
+        if (currentLever == new Vector2(-1, 1))
         {
-            _lever += 1;
+            _lever = 7;　//レバー入力７
         }
 
-        if (Input.GetKeyUp(KeyCode.D))
+        if (currentLever == new Vector2(0, 1))
         {
-            _lever -= 1;
+            _lever = 8;　//レバー入力８
+        }
+
+        if (currentLever == new Vector2(1, 1))
+        {
+            _lever = 9;　//レバー入力９
         }
     }
-
 
 
     /// <summary>コマンドの成立判定</summary>
@@ -155,8 +156,8 @@ public class CommandScript : MonoBehaviour
                 else
                 {
                     success = 0;
-                    commands.Dequeue();
-                    break;       //successをリセットし先頭を削除、ループを抜ける
+                    commands.Dequeue();　//successをリセットし先頭を削除、ループを抜ける
+                    break;       　　　　
                 }
             }
         }
