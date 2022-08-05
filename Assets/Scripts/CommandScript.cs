@@ -5,7 +5,7 @@ using UnityEngine;
 public class CommandScript : MonoBehaviour
 {
     [Tooltip("入力を受けるキュー")] Queue<int> _commandInput = new();
-    
+
     [Tooltip("波動拳の入力")] int[] _hadoken = { 2, 3, 6 };
     [Tooltip("昇龍拳の入力")] int[] _shoryuken = { 6, 2, 3 };
     [Tooltip("昇龍拳の入力別パターン")] int[] _shoryuken2 = { 3, 2, 3 };
@@ -18,7 +18,7 @@ public class CommandScript : MonoBehaviour
     [Header("Command")]
     [SerializeField, Tooltip("入力を保存しておく最大量")] int _inputLimit = 6;
 
-    [Tooltip("入力時間を測るためのタイマー")]　float _timer;
+    [Tooltip("入力時間を測るためのタイマー")] float _timer;
     [Tooltip("コマンドをリセットする時間")] float _comandInterval = 1f;
 
 
@@ -27,9 +27,12 @@ public class CommandScript : MonoBehaviour
     [SerializeField, Tooltip("チェックを行うかの確認")] bool _commandCheck = false;
 
 
+    //const int 
+
     void Update()
     {
         _timer += Time.deltaTime;
+
 
         if (_timer > _comandInterval)  //コマンドのリセットを時間で行う
         {
@@ -50,17 +53,15 @@ public class CommandScript : MonoBehaviour
         if (_beforeLever != _lever && _lever != 5)　//入力が入った場合キューに追加
         {
             _timer = 0;
-            //StartCoroutine(InputInterval());
 
             _commandInput.Enqueue(_lever);
 
-            if (_commandCheck)
+            if (_commandCheck)  //コマンドのチェックを実行するか
             {
                 _checkCommands.Add(_lever);
             }
 
         }
-
 
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -69,7 +70,7 @@ public class CommandScript : MonoBehaviour
             {
                 Debug.Log("波動拳");
             }
-            
+
             if (CommandSuccess(_shoryuken) || CommandSuccess(_shoryuken2))
             {
                 Debug.Log("昇龍拳");
@@ -87,7 +88,7 @@ public class CommandScript : MonoBehaviour
     /// <summary>レバー入力の判定</summary>
     void CommandInput()
     {
-        if (Input.GetKeyDown(KeyCode.W)) 
+        if (Input.GetKeyDown(KeyCode.W))
         {
             _lever += 3;
         }
@@ -134,54 +135,33 @@ public class CommandScript : MonoBehaviour
         }
     }
 
-    
-    
+
+
     /// <summary>コマンドの成立判定</summary>
     bool CommandSuccess(int[] specialmove)
     {
         int success = 0;
-        Queue<int> commands = new (_commandInput);　//現在の入力をコピー
+        Queue<int> commands = new(_commandInput);　//現在の入力をコピー
 
-        if (commands.Count >= 3)　//現在の入力の数が３以上か
+        while (commands.Count >= 3)
         {
-            while (true)
+            foreach (var co in specialmove) //コマンドの配列をひとつずつ取り出す
             {
-                foreach (var co in specialmove)　//コマンドの配列をひとつずつ取り出す
+                if (commands.Peek() == co) //キューの先頭とコマンドの要素を比較
                 {
-                    if (commands.Peek() == co)　//キューの先頭とコマンドの要素を比較
-                    {
-                        success++;
-                        commands.Dequeue();　//successにプラスし先頭を削除
-                    }
-                    else
-                    {
-                        success = 0;
-                        commands.Dequeue();
-                        break;　　　　　　　//successをリセットし先頭を削除、ループを抜ける
-                    }                 
-                }               
-
-                if (commands.Count < 3)　//現在の要素の数によってwhileを抜ける
+                    success++;
+                    commands.Dequeue(); //successにプラスし先頭を削除
+                }
+                else
                 {
-                    break;
+                    success = 0;
+                    commands.Dequeue();
+                    break;       //successをリセットし先頭を削除、ループを抜ける
                 }
             }
         }
 
         return success >= 3;　//successの数を見て値を返す
-    }
-
-
-    /// <summary>キューへの追加をコルーチンで実行</summary>
-    IEnumerator InputInterval()
-    {
-        yield return null;
-        _commandInput.Enqueue(_lever);
-
-        if (_commandCheck)
-        {
-            _checkCommands.Add(_lever);
-        }
     }
 
 

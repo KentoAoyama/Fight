@@ -46,6 +46,8 @@ public class PlayerMove : MonoBehaviour
             _x = -1;
         }
 
+        Vector2 a = new Vector2( _x, _y).normalized;
+
         if (_y >= -0.2 && !_ps.IsStep)　//しゃがんでいない時かつステップしていない時
         {
             _rb.velocity = new Vector2(_moveSpeedX * _x, _rb.velocity.y);

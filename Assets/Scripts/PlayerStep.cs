@@ -34,7 +34,7 @@ public class PlayerStep : MonoBehaviour
     {
         if (!_isStep && _pm.InputY > -0.2)　//ステップ中でないかつしゃがんでいないなら
         {
-            //StepFront();
+            StepFront();
 
             StepBack();
         }
@@ -42,7 +42,7 @@ public class PlayerStep : MonoBehaviour
 
 
     /// <summary>前ステップの処理</summary>
-    void Step(float vec, float timer, bool step1, bool step2, bool step3, Coroutine coroutine)
+    void StepFront(/*float vec, float timer, bool step1, bool step2, bool step3, Coroutine coroutine*/)
     {     
         if (_pm.InputX == 1 && !_fStep1)
         {
