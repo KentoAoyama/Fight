@@ -19,13 +19,20 @@ public class CommandScript : MonoBehaviour
     [SerializeField, Tooltip("入力を保存しておく最大量")] int _inputLimit = 6;
 
     [Tooltip("入力時間を測るためのタイマー")] float _timer;
-    [Tooltip("コマンドをリセットする時間")] float _comandInterval = 1f;
+    [Tooltip("コマンドをリセットする時間")]readonly float _comandInterval = 1f;
 
 
     [Header("Check")]
     [SerializeField, Tooltip("チェックに使う用のリスト")] List<int> _checkCommands = new();
     [SerializeField, Tooltip("チェックを行うかの確認")] bool _commandCheck = false;
 
+    PlayerMove _pm;
+
+
+    void Start()
+    {
+        _pm = GetComponent<PlayerMove>();
+    }
 
     void Update()
     {
@@ -86,8 +93,8 @@ public class CommandScript : MonoBehaviour
     /// <summary>テンキー形式でのレバー入力の判定</summary>
     void CommandInput()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        float x = _pm.InputX;
+        float y = _pm.InputY;
 
         Vector2 currentLever = new (x, y);
 

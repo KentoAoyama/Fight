@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    int _frame = 0;
-    
-    
-    void FixedUpdate()
+    PlayerStateManager _psm;
+
+
+
+    void Start()
     {
-        _frame++;
+        
     }
 
 }

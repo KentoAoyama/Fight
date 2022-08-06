@@ -20,10 +20,12 @@ public class PlayerStep : MonoBehaviour
     [Tooltip("‘O‚É“ü—Í‚ª“ü‚Á‚Ä‚©‚ç‚ÌŽžŠÔŒv‘ª")] float _fTimer;
     [Tooltip("Œã‚ë‚É“ü—Í‚ª“ü‚Á‚Ä‚©‚ç‚ÌŽžŠÔŒv‘ª")] float _bTimer;
 
-    
-    PlayerMove _pm;
+      
     Animator _ani;
     Rigidbody2D _rb;
+    
+    PlayerMove _pm;
+    PlayerStateManager _psm;
 
 
     void Start()
@@ -32,6 +34,7 @@ public class PlayerStep : MonoBehaviour
         _ani = GetComponent<Animator>();
 
         _pm = GetComponent<PlayerMove>();
+        _psm = GetComponent<PlayerStateManager>();
     }
 
     void Update()
@@ -78,7 +81,15 @@ public class PlayerStep : MonoBehaviour
             _fStep1 = false;
             _fTimer = 0;
             _isStep = true;
-            StartCoroutine(StepRoutine(1, _stepTime, "IsStep"));
+            
+            if (_psm.PlayerNum == PlayerStateManager.PlayerNumber.Player1)
+            {
+                StartCoroutine(StepRoutine(1, _stepTime, "IsStep"));
+            }
+            else
+            {
+                StartCoroutine(StepRoutine(1, _backStepTime, "IsBackStep"));
+            }
         }
     }
 
@@ -115,7 +126,15 @@ public class PlayerStep : MonoBehaviour
             _bStep1 = false;
             _bTimer = 0;
             _isStep = true;
-            StartCoroutine(StepRoutine(-1, _backStepTime, "IsBackStep"));
+            
+            if (_psm.PlayerNum == PlayerStateManager.PlayerNumber.Player1)
+            {
+                StartCoroutine(StepRoutine(-1, _backStepTime, "IsBackStep"));
+            }
+            else
+            {
+                StartCoroutine(StepRoutine(-1, _stepTime, "IsStep"));
+            }
         }
     }
 
