@@ -7,7 +7,7 @@ public class PlayerStateManager : MonoBehaviour
     PlayerGuard _playerGuard;
     public PlayerGuard GuardState { get => _playerGuard; set => _playerGuard = value;}
     
-    public PlayerNumber _playerNumber;
+    PlayerNumber _playerNumber;
     public PlayerNumber PlayerNum { get => _playerNumber; set => _playerNumber = value; }
 
 
